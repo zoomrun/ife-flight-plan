@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFE: The Plane Is Ready. Nobody Is In The Tower.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f2ec;
+    --teal: #1a6b5a;
+    --teal-light: #e8f4f0;
+    --teal-mid: #b8ddd6;
+    --amber: #c4621a;
+    --amber-light: #fdf0e6;
+    --amber-mid: #f0c49a;
+    --purple: #3d2d6b;
+    --purple-light: #ede9f8;
+    --red: #b5200e;
+    --red-light: #fdf0ee;
+    --gray: #6b6760;
+    --gray-light: #e8e5df;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); font-family: 'DM Sans', sans-serif; color: var(--ink); padding: 40px 32px; }
+  .board { max-width: 1200px; margin: 0 auto; }
+
+  /* TITLE */
+  .title-block { text-align: center; margin-bottom: 48px; padding-bottom: 28px; border-bottom: 3px solid var(--ink); animation: fadeUp 0.5s ease both; }
+  .eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; }
+  .main-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4.5vw, 60px); letter-spacing: 2px; line-height: 1; color: var(--ink); margin-bottom: 10px; }
+  .subtitle { font-size: 14px; color: var(--gray); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+
+  /* SECTION */
+  .section { margin-bottom: 40px; animation: fadeUp 0.5s ease both; }
+  .section:nth-child(2){animation-delay:.1s} .section:nth-child(3){animation-delay:.15s}
+  .section:nth-child(4){animation-delay:.2s} .section:nth-child(5){animation-delay:.25s}
+  .section:nth-child(6){animation-delay:.3s}
+
+  .section-band { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .band-line { flex: 1; height: 1.5px; }
+  .band-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap; padding: 4px 10px; border-radius: 2px; font-weight: 500; }
+  .band-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; white-space: nowrap; }
+
+  .act1 .band-line { background: var(--amber-mid); }
+  .act1 .band-tag { background: var(--amber); color: var(--white); }
+  .act1 .band-title { color: var(--amber); }
+  .act2 .band-line { background: var(--gray-light); }
+  .act2 .band-tag { background: var(--red); color: var(--white); }
+  .act2 .band-title { color: var(--red); }
+  .act3 .band-line { background: var(--teal-mid); }
+  .act3 .band-tag { background: var(--teal); color: var(--white); }
+  .act3 .band-title { color: var(--teal); }
+  .act4 .band-line { background: var(--amber-mid); }
+  .act4 .band-tag { background: var(--amber); color: var(--white); }
+  .act4 .band-title { color: var(--amber); }
+  .act5 .band-line { background: #c4bbde; }
+  .act5 .band-tag { background: var(--purple); color: var(--white); }
+  .act5 .band-title { color: var(--purple); }
+
+  /* ACT 1 */
+  .timeline-panel { background: var(--amber-light); border: 1.5px solid var(--amber-mid); border-radius: 6px; padding: 28px; }
+  .timeline-intro { font-size: 14px; line-height: 1.7; color: var(--ink); margin-bottom: 24px; max-width: 800px; }
+  .timeline-intro strong { color: var(--amber); }
+
+  .waste-bar-label { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); margin-bottom: 6px; letter-spacing: 1px; }
+  .waste-bar-track { height: 40px; background: var(--gray-light); border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 8px; }
+  .waste-segment { height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; }
+  .waste-wait { background: var(--red); color: var(--white); width: 68.75%; }
+  .waste-work { background: var(--teal); color: var(--white); width: 31.25%; }
+  .waste-legend { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  .bottleneck-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .bottleneck-card { background: var(--white); border: 1px solid var(--amber-mid); border-radius: 4px; padding: 14px 12px; }
+  .bottleneck-card.big { border-color: var(--red); border-width: 2px; }
+  .bottleneck-phase { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+  .bottleneck-wait { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; margin-bottom: 2px; }
+  .bottleneck-card.big .bottleneck-wait { color: var(--red); font-size: 40px; }
+  .bottleneck-card:not(.big) .bottleneck-wait { color: var(--amber); }
+  .bottleneck-desc { font-size: 11px; color: var(--gray); line-height: 1.4; }
+  .bottleneck-ratio { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--red); margin-top: 4px; font-weight: 500; }
+
+  .rework-callout { background: var(--red-light); border: 1.5px solid var(--red); border-radius: 4px; padding: 14px 18px; font-size: 13px; line-height: 1.6; color: var(--ink); }
+  .rework-callout strong { color: var(--red); }
+
+  /* ACT 2 */
+  .data-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .data-card { background: var(--white); border: 1.5px solid var(--ink); border-radius: 4px; padding: 24px 20px; text-align: center; position: relative; overflow: hidden; }
+  .data-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--red); }
+  .data-number { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--red); line-height: 1; margin-bottom: 6px; }
+  .data-label { font-size: 13px; font-weight: 500; margin-bottom: 4px; line-height: 1.4; }
+  .data-sub { font-size: 11px; color: var(--gray); line-height: 1.4; margin-bottom: 8px; }
+  .data-source { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); border-top: 1px solid var(--gray-light); padding-top: 6px; margin-top: 4px; }
+
+  /* ACT 3 */
+  .what-if-panel { background: var(--teal-light); border: 1.5px solid var(--teal-mid); border-radius: 6px; padding: 28px; }
+  .comparison-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; margin-bottom: 24px; }
+  .compare-box { border-radius: 4px; padding: 20px; text-align: center; }
+  .compare-box.current-state { background: var(--red-light); border: 2px solid var(--red); }
+  .compare-box.future-state { background: var(--white); border: 2px solid var(--teal); }
+  .compare-weeks { font-family: 'Bebas Neue', sans-serif; font-size: 64px; line-height: 1; margin-bottom: 4px; }
+  .current-state .compare-weeks { color: var(--red); }
+  .future-state .compare-weeks { color: var(--teal); }
+  .compare-label { font-size: 12px; font-weight: 500; line-height: 1.4; }
+  .current-state .compare-label { color: var(--red); }
+  .future-state .compare-label { color: var(--teal); }
+  .compare-sub { font-size: 11px; color: var(--gray); margin-top: 4px; line-height: 1.4; }
+  .vs-block { text-align: center; }
+  .vs-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--gray); display: block; margin-bottom: 4px; }
+  .vs-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 1px; line-height: 1.6; }
+
+  .what-changed-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .what-changed-item { background: var(--white); border: 1px solid var(--teal-mid); border-radius: 4px; padding: 14px 12px; }
+  .changed-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+  .changed-old { font-size: 11px; color: var(--red); text-decoration: line-through; margin-bottom: 3px; line-height: 1.4; }
+  .changed-new { font-size: 11px; color: var(--teal); font-weight: 500; line-height: 1.4; }
+
+  .projection-source {
+    background: var(--teal); border-radius: 3px; padding: 12px 18px;
+    font-size: 12px; color: var(--white); line-height: 1.6;
+  }
+  .projection-source strong { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; opacity: 0.7; }
+
+  .dollar-callout {
+    margin-top: 14px;
+    background: rgba(26,107,90,0.08); border: 1px dashed var(--teal);
+    border-radius: 4px; padding: 14px 18px;
+  }
+  .dollar-callout-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+  .dollar-callout-body { font-size: 12px; color: var(--ink); line-height: 1.6; }
+  .dollar-callout-body strong { color: var(--teal); }
+  .dollar-groups { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .dollar-group-tag { font-family: 'DM Mono', monospace; font-size: 10px; background: var(--teal-light); border: 1px solid var(--teal-mid); color: var(--teal); padding: 3px 8px; border-radius: 2px; }
+
+  /* ACT 4 */
+  .now-panel { background: var(--ink); border-radius: 6px; padding: 28px; color: var(--white); }
+  .now-intro { font-size: 14px; line-height: 1.7; margin-bottom: 24px; max-width: 800px; color: rgba(255,255,255,0.8); }
+  .now-intro strong { color: var(--white); }
+  .now-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .now-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 16px; }
+  .now-card.critical { border-color: var(--amber); background: rgba(196,98,26,0.15); }
+  .now-card-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+  .now-card.critical .now-card-label { color: var(--amber); }
+  .now-card-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+  .now-card-body { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.5; margin-bottom: 8px; }
+  .now-card-cause { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,165,80,0.9); line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; }
+  .now-card-source { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+
+  .now-parallel { background: rgba(181,32,14,0.2); border: 1.5px solid var(--red); border-radius: 4px; padding: 14px 18px; font-size: 13px; color: var(--white); line-height: 1.6; }
+  .now-parallel strong { color: #ff9e9e; }
+
+  /* ACT 5 */
+  .decisions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .decision-card { background: var(--purple-light); border: 1.5px solid var(--purple); border-radius: 4px; padding: 24px; }
+  .decision-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--purple); opacity: 0.2; line-height: 1; margin-bottom: 2px; }
+  .decision-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--purple); margin-bottom: 3px; }
+  .decision-role { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .decision-body { font-size: 12px; line-height: 1.6; color: var(--ink); margin-bottom: 14px; }
+  .consequence { background: rgba(61,45,107,0.08); border-left: 3px solid var(--purple); padding: 8px 12px; font-size: 11px; line-height: 1.5; color: var(--purple); border-radius: 0 3px 3px 0; }
+  .consequence strong { display: block; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; opacity: 0.7; }
+
+  .runway-bar { background: var(--purple); border-radius: 3px; padding: 14px 24px; display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
+  .runway-text { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: rgba(255,255,255,0.9); }
+  .runway-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+
+  /* FOOTER */
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--gray-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 0.5px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 900px) {
+    .bottleneck-grid, .what-changed-grid { grid-template-columns: repeat(2,1fr); }
+    .data-grid, .now-grid, .decisions-grid { grid-template-columns: 1fr; }
+    .comparison-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <div class="eyebrow">IFE Hangar Wave 3 &nbsp;|&nbsp; American Airlines &nbsp;|&nbsp; Week 3 Field Evidence &nbsp;|&nbsp; March 2026</div>
+    <div class="main-title">The Plane Is Ready. Nobody Is In The Tower.</div>
+    <div class="subtitle">What the data shows, what it cost, what it could have been, and what is happening right now. Four acts. All sourced. All facts.</div>
+  </div>
+
+  <!-- ACT 1 -->
+  <div class="section act1">
+    <div class="section-band">
+      <div class="band-line"></div>
+      <div class="band-tag">Act 1</div>
+      <div class="band-title">Then &mdash; The Free WiFi Launch. 32 Weeks. Here Is Where The Time Went.</div>
+      <div class="band-line"></div>
+    </div>
+    <div class="timeline-panel">
+      <div class="timeline-intro">
+        <strong>The team did not fail to build. The team built, unbuilt, and rebuilt.</strong> The gate was full but the plane kept getting reloaded. Requirements changed during development. Dependencies arrived late. Approvals stalled. Every time the plane was ready to push back, something new came through the gate. The engineers were not idle. They were redoing work.
+      </div>
+      <div class="waste-bar-label">
+        <span>MAY 2025 &mdash; START</span>
+        <span>32 CALENDAR WEEKS TOTAL &mdash; SOURCE: VSM SUMMARY ROW, JANUARY 30, 2026</span>
+        <span>JAN 2026 &mdash; LAUNCH</span>
+      </div>
+      <div class="waste-bar-track">
+        <div class="waste-segment waste-wait">22 WEEKS WAITING &mdash; 69% OF TOTAL TIME</div>
+        <div class="waste-segment waste-work">10 WKS BUILDING &mdash; 31%</div>
+      </div>
+      <div class="waste-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Wait time: decisions pending, approvals stalled, rework cycles, dependency delays</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div> Process time: active building</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gray-light);border:1px solid var(--gray)"></div> Built by the product trio and engineering team (Dallas + Hyderabad) &mdash; January 30, 2026</div>
+      </div>
+      <div class="bottleneck-grid">
+        <div class="bottleneck-card big">
+          <div class="bottleneck-phase">Integration testing</div>
+          <div class="bottleneck-wait">16 wks</div>
+          <div class="bottleneck-desc">Largest single source of waste. Driven entirely by changing requirements and rework cycles during delivery. The team was ready. The scope was not locked.</div>
+          <div class="bottleneck-ratio">Largest single source of wait time</div>
+        </div>
+        <div class="bottleneck-card">
+          <div class="bottleneck-phase">Loyalty team dependency</div>
+          <div class="bottleneck-wait">4 wks</div>
+          <div class="bottleneck-desc">4 weeks of waiting for 0.2 weeks of actual work from an external team. IFE urgency did not match the dependency team's priority. No proactive alignment existed.</div>
+          <div class="bottleneck-ratio">20:1 wait-to-work ratio</div>
+        </div>
+        <div class="bottleneck-card">
+          <div class="bottleneck-phase">Discovery &amp; scoping</div>
+          <div class="bottleneck-wait">4 wks</div>
+          <div class="bottleneck-desc">Team started with a one-liner from leadership. The problem was discovered during execution, not before. Scope grew continuously from June to December.</div>
+          <div class="bottleneck-ratio">Problem framed during building</div>
+        </div>
+        <div class="bottleneck-card">
+          <div class="bottleneck-phase">Vendor &amp; design alignment</div>
+          <div class="bottleneck-wait">4 wks</div>
+          <div class="bottleneck-desc">Reaktor workshop alignment and mid-delivery design scope changes added avoidable wait time. Zero sprint reviews in 32 weeks meant feedback arrived too late to use.</div>
+          <div class="bottleneck-ratio">Scope changed mid-flight</div>
+        </div>
+      </div>
+      <div class="rework-callout">
+        <strong>The engineers were not idle. They were redoing work.</strong> Zero sprint reviews across 32 weeks meant leadership feedback arrived after the work was built. When it did arrive it triggered rework. The plane was loaded, unloaded, and reloaded multiple times before it was cleared to push back. The team absorbed every change because no mechanism existed to say: this flight is closed, we are pushing back now.
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 2 -->
+  <div class="section act2">
+    <div class="section-band">
+      <div class="band-line"></div>
+      <div class="band-tag">Act 2</div>
+      <div class="band-title">What It Cost &mdash; Three Numbers. All Sourced. All Facts.</div>
+      <div class="band-line"></div>
+    </div>
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-number">69%</div>
+        <div class="data-label">Of 32 calendar weeks was wait time</div>
+        <div class="data-sub">22 weeks spent waiting for decisions, approvals, and rework. Not building. Not because the team was slow. Because the system had no process to catch problems early. The team built this number themselves on January 30.</div>
+        <div class="data-source">VSM summary row &mdash; built by product trio and engineering team, January 30, 2026</div>
+      </div>
+      <div class="data-card">
+        <div class="data-number">45%</div>
+        <div class="data-label">Enrollment identity mismatch today</div>
+        <div class="data-sub">Nearly half of all free WiFi enrollments cannot be verified against the passenger manifest. One usability test was conducted in 32 weeks. Accessibility work landed in MVP2, not MVP1.</div>
+        <div class="data-source">AAdvantage analytics &mdash; surfaced by the engineering team, Week 2 discovery session</div>
+      </div>
+      <div class="data-card">
+        <div class="data-number">30%</div>
+        <div class="data-label">Current free WiFi take rate</div>
+        <div class="data-sub">7 in 10 eligible passengers are not connecting. No validated take rate target was established before launch. The team did not know what winning looked like before they built.</div>
+        <div class="data-source">Product Owner confirmed baseline &mdash; Week 1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 3 -->
+  <div class="section act3">
+    <div class="section-band">
+      <div class="band-line"></div>
+      <div class="band-tag">Act 3</div>
+      <div class="band-title">What Could Have Been &mdash; Same Team. Same Skills. Different System.</div>
+      <div class="band-line"></div>
+    </div>
+    <div class="what-if-panel">
+      <div class="comparison-row">
+        <div class="compare-box current-state">
+          <div class="compare-weeks">32</div>
+          <div class="compare-label">Weeks. What it took.</div>
+          <div class="compare-sub">No upfront discovery. No sprint reviews. Reactive dependency management. Changing requirements throughout delivery. Rework cycles driving the largest single wait block.</div>
+        </div>
+        <div class="vs-block">
+          <span class="vs-text">VS</span>
+          <div class="vs-sub">SAME TEAM<br>SAME SKILLS<br>DIFFERENT SYSTEM</div>
+        </div>
+        <div class="compare-box future-state">
+          <div class="compare-weeks">16</div>
+          <div class="compare-label">Weeks. What it needed.</div>
+          <div class="compare-sub">The team's own assessment of the VSM findings projects 16 weeks as achievable when four specific conditions are met. The difference is not capability. It is the system.</div>
+        </div>
+      </div>
+
+      <div class="what-changed-grid">
+        <div class="what-changed-item">
+          <div class="changed-label">Discovery</div>
+          <div class="changed-old">Problem found during execution. 4 wks scope discovery wait.</div>
+          <div class="changed-new">Problem confirmed before sprint 1. Team knows what they are solving before they build.</div>
+        </div>
+        <div class="what-changed-item">
+          <div class="changed-label">Dependencies</div>
+          <div class="changed-old">Loyalty team: 4 wks wait for 0.2 wks work. Reactive. 20:1 ratio.</div>
+          <div class="changed-new">Dependencies identified upfront. Aligned proactively. No ambush mid-delivery.</div>
+        </div>
+        <div class="what-changed-item">
+          <div class="changed-label">Feedback loops</div>
+          <div class="changed-old">Zero sprint reviews in 32 weeks. Late feedback triggered rework.</div>
+          <div class="changed-new">Biweekly sprint reviews. Feedback arrives when it can still change the work, not after.</div>
+        </div>
+        <div class="what-changed-item">
+          <div class="changed-label">Scope control</div>
+          <div class="changed-old">Requirements changed during dev. Integration testing: 16 wks wait.</div>
+          <div class="changed-new">Scope locked before building begins. Testing validates. It does not discover.</div>
+        </div>
+      </div>
+
+      <div class="projection-source">
+        <strong>Source &amp; attribution</strong>
+        The 16-week projection was produced by the product trio and the full engineering team (Dallas and Hyderabad) during the VSM session on January 30, 2026. This is not a coaching team estimate. It is the team's own assessment of what their delivery timeline looks like when the four conditions above are met.
+      </div>
+
+      <div class="dollar-callout">
+        <div class="dollar-callout-label">Financial value &mdash; assessment in progress</div>
+        <div class="dollar-callout-body">
+          16 weeks of recovered delivery time has a direct financial value that is currently being assessed. At the team's blended delivery rate and within the scope of the current vendor contract, <strong>the directional figure is material to the business case.</strong> A full financial quantification is being developed with input from three groups.
+          <div class="dollar-groups">
+            <div class="dollar-group-tag">Product team</div>
+            <div class="dollar-group-tag">Business stakeholders</div>
+            <div class="dollar-group-tag">Customer data</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 4 -->
+  <div class="section act4">
+    <div class="section-band">
+      <div class="band-line"></div>
+      <div class="band-tag">Act 4</div>
+      <div class="band-title">Now &mdash; Week 3. The Same Pattern Is Active Today.</div>
+      <div class="band-line"></div>
+    </div>
+    <div class="now-panel">
+      <div class="now-intro">
+        <strong>The gate is full again.</strong> The same three roles are being asked to service every flight simultaneously. Five Dallas engineers and a full Hyderabad team are at the gate ready to build. They are not building. Not because they are slow. Because the three people who load their planes with context, stories, and direction are being pulled in five directions at once. The engineers are not idle. They are waiting for clarity that nobody upstream has time to give them.
+      </div>
+
+      <div class="now-grid">
+        <div class="now-card critical">
+          <div class="now-card-label">Critical connector 1</div>
+          <div class="now-card-title">Product Owner</div>
+          <div class="now-card-body">Carrying PO responsibilities, PM strategy responsibilities, Hyderabad context transfer, Objective 3 discovery, Objective 2 planning, and inbound work triage simultaneously. No confirmed filter for what can wait.</div>
+          <div class="now-card-cause">Structural cause: The PM director role has been functionally vacant for approximately 6 months. The Product Owner is absorbing the gap by design, not by choice. The ownership boundary between two directors has not been formally resolved, which means strategic direction arrives from multiple sources with no single authority to triage it.</div>
+          <div class="now-card-source">Source: PM direct connect, March 16, 2026 &bull; Week 1&ndash;2 field observation</div>
+        </div>
+        <div class="now-card critical">
+          <div class="now-card-label">Critical connector 2</div>
+          <div class="now-card-title">UX Researcher</div>
+          <div class="now-card-body">Allocated across 8 concurrent IFC initiatives, MVP1 Helsinki, Objective 3 UX design, Objective 2 UX design, Fox Sports, AT&T, and UserZoom research approvals. Named by the PM as one of three people critical to MVP1 delivery.</div>
+          <div class="now-card-cause">Structural cause: No director-level prioritization decision has been made on UX research allocation. The system has no mechanism to tell this role which work wins when demands conflict. Every initiative arrives with equal urgency and no named decision owner to sequence them.</div>
+          <div class="now-card-source">Source: PM direct connect, March 16, 2026 &bull; MD Teams channel, March 19, 2026</div>
+        </div>
+        <div class="now-card critical">
+          <div class="now-card-label">Critical connector 3</div>
+          <div class="now-card-title">Architect</div>
+          <div class="now-card-body">Carrying MVP1 Helsinki architecture, Objective 3 manifest validation design, AT&T release work, and Objective 2 technical feasibility simultaneously. The team cannot size or sequence work without this role's input.</div>
+          <div class="now-card-cause">Structural cause: The architect is being asked to support two delivery tracks and one coaching engagement concurrently with no formal allocation decision. Technical direction and product discovery direction are arriving from different sources with no shared priority order.</div>
+          <div class="now-card-source">Source: PM direct connect, March 16, 2026 &bull; OST session observation, March 16, 2026</div>
+        </div>
+      </div>
+
+      <div class="now-grid">
+        <div class="now-card">
+          <div class="now-card-label">Waiting at the gate</div>
+          <div class="now-card-title">5 Dallas Engineers</div>
+          <div class="now-card-body">Ready to build. Backlog insufficient without the three connectors feeding context, stories, and direction. Not slow. Not disengaged. Blocked upstream. The same condition existed in the free WiFi build. It produced 16 weeks of integration testing wait.</div>
+        </div>
+        <div class="now-card">
+          <div class="now-card-label">Waiting at the gate</div>
+          <div class="now-card-title">Full Hyderabad Team</div>
+          <div class="now-card-body">Capable and ready. Executing work without understanding the customer problem behind it for months. Received Objective 2 context for the first time in Week 3. Runway is clear. Takeoff authorization has not been issued.</div>
+        </div>
+        <div class="now-card">
+          <div class="now-card-label">New flights being added</div>
+          <div class="now-card-title">Inbound Work Pattern</div>
+          <div class="now-card-body">2 unplanned items in 2 weeks: AT&T and Fox Sports World Cup. At the current rate: 12 unplanned items projected before May 22. No organizational mechanism exists to decide which flight gets the runway first.</div>
+        </div>
+      </div>
+
+      <div class="now-parallel" style="margin-top:16px">
+        <strong>This is not a new problem. This is the same problem.</strong> The VSM showed it in the free WiFi launch: 22 of 32 weeks spent waiting because no one was authorized to close the gate and clear the plane for pushback. The same condition is active today. The coaches are on the ground. The engineers are at the gate. The runway is clear. <strong>Three decisions from leadership authorize the pushback.</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 5 -->
+  <div class="section act5">
+    <div class="section-band">
+      <div class="band-line"></div>
+      <div class="band-tag">Act 5</div>
+      <div class="band-title">Three Clearances Needed &mdash; Only Leadership Can Issue Them</div>
+      <div class="band-line"></div>
+    </div>
+    <div class="decisions-grid">
+      <div class="decision-card">
+        <div class="decision-num">01</div>
+        <div class="decision-title">Ownership Clarity</div>
+        <div class="decision-role">Role: Directors</div>
+        <div class="decision-body">The IFE product strategy currently has multiple parties providing direction to the same team simultaneously. The ownership boundary between the two directors has not been formally resolved. A confirmed owner removes the competing instructions. The team needs one tower, not three.</div>
+        <div class="consequence">
+          <strong>If not decided before March 27</strong>
+          The VP Connect produces conversation without accountability. Competing instructions continue. The pattern that produced 69% waste and a 6-month director vacancy persists into the next delivery cycle.
+        </div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-num">02</div>
+        <div class="decision-title">Inbound Work Filter</div>
+        <div class="decision-role">Role: Managing Directors</div>
+        <div class="decision-body">The team cannot use the product objectives as a filter for inbound work without leadership confirming that non-objective work waits. Two items arrived in two weeks. The pattern is confirmed. At the current rate, 12 more arrive by May 22. Without a filter the three connectors keep absorbing everything.</div>
+        <div class="consequence">
+          <strong>If not decided before Week 6</strong>
+          The engagement closes with the same structural condition it opened with. The next team inherits the same flight plan. The 16-week delivery improvement the team projected remains unrealized.
+        </div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-num">03</div>
+        <div class="decision-title">Research Prioritization</div>
+        <div class="decision-role">Role: Director of Product</div>
+        <div class="decision-body">The UX research function is currently allocated across eight concurrent initiatives with no decision on which wins when they conflict. One prioritization decision frees the capacity needed to advance Objectives 2 and 3. Without it neither objective can move at the pace the engagement requires.</div>
+        <div class="consequence">
+          <strong>If not decided before Week 6</strong>
+          Both objectives stall on UX. The Hyderabad team stays at the gate. Dallas continues without the passenger evidence needed to validate what they are building. The 45% mismatch has no remediation path.
+        </div>
+      </div>
+    </div>
+    <div class="runway-bar">
+      <div class="runway-dot"></div>
+      <div class="runway-text">The team is ready &nbsp;&mdash;&nbsp; The engineers are at the gate &nbsp;&mdash;&nbsp; Three clearances authorize the pushback</div>
+      <div class="runway-dot"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-text">IFE Hangar Wave 3 &nbsp;|&nbsp; Coaching Engagement &nbsp;|&nbsp; January 27 to May 22, 2026 &nbsp;|&nbsp; Prepared for director and above</div>
+    <div class="footer-text">Sources: VSM summary row (product trio + engineering team, Jan 30 2026) &bull; AAdvantage analytics (Week 2) &bull; Product Owner baseline (Week 1) &bull; PM direct connect (March 16) &bull; MD channel (March 19)</div>
+  </div>
+
+</div>
+</body>
+</html>
