@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFE: The Plane Is Ready. Nobody Is In The Tower.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f2ec;
+    --teal: #1a6b5a;
+    --teal-light: #e8f4f0;
+    --teal-mid: #b8ddd6;
+    --amber: #c4621a;
+    --amber-light: #fdf0e6;
+    --amber-mid: #f0c49a;
+    --purple: #3d2d6b;
+    --purple-light: #ede9f8;
+    --red: #b5200e;
+    --red-light: #fdf0ee;
+    --gray: #6b6760;
+    --gray-light: #e8e5df;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); font-family: 'DM Sans', sans-serif; color: var(--ink); padding: 48px 40px; }
+  .board { max-width: 1100px; margin: 0 auto; }
+
+  .title-block { margin-bottom: 56px; padding-bottom: 32px; border-bottom: 3px solid var(--ink); animation: fadeUp 0.5s ease both; }
+  .eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 14px; }
+  .main-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 72px); letter-spacing: 2px; line-height: 1; color: var(--ink); margin-bottom: 20px; }
+  .title-context { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .context-box { border-radius: 4px; padding: 16px 20px; }
+  .context-box.insight { background: var(--ink); }
+  .context-box.stakes { background: var(--amber-light); border: 1.5px solid var(--amber-mid); }
+  .context-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .context-box.insight .context-label { color: rgba(255,255,255,0.5); }
+  .context-box.stakes .context-label { color: var(--amber); }
+  .context-body { font-size: 14px; line-height: 1.6; font-weight: 500; }
+  .context-box.insight .context-body { color: var(--white); }
+  .context-box.insight .context-body strong { color: #ffd9a0; }
+  .context-box.stakes .context-body { color: var(--ink); }
+  .context-box.stakes .context-body strong { color: var(--amber); }
+
+  .punch { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+  .punch:nth-child(2){animation-delay:.1s} .punch:nth-child(3){animation-delay:.15s} .punch:nth-child(4){animation-delay:.2s}
+
+  .punch-band { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+  .punch-number { font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; flex-shrink: 0; }
+  .punch-1 .punch-number { color: var(--red); }
+  .punch-2 .punch-number { color: var(--amber); }
+  .punch-3 .punch-number { color: var(--purple); }
+  .punch-label-block { flex: 1; }
+  .punch-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; padding: 3px 10px; border-radius: 2px; display: inline-block; margin-bottom: 6px; font-weight: 500; }
+  .punch-1 .punch-tag { background: var(--red); color: var(--white); }
+  .punch-2 .punch-tag { background: var(--amber); color: var(--white); }
+  .punch-3 .punch-tag { background: var(--purple); color: var(--white); }
+  .punch-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(18px, 2.2vw, 26px); letter-spacing: 1px; line-height: 1.1; }
+  .punch-1 .punch-title { color: var(--red); }
+  .punch-2 .punch-title { color: var(--amber); }
+  .punch-3 .punch-title { color: var(--purple); }
+  .punch-divider { flex: 1; height: 1.5px; }
+  .punch-1 .punch-divider { background: #e8a090; }
+  .punch-2 .punch-divider { background: var(--amber-mid); }
+  .punch-3 .punch-divider { background: #c4bbde; }
+
+  .punch-1-panel { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 6px; overflow: hidden; }
+  .waste-header { background: var(--ink); padding: 20px 28px; display: flex; align-items: center; gap: 24px; }
+  .waste-headline { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6; flex: 1; }
+  .waste-headline strong { color: var(--white); }
+  .waste-badge { text-align: center; flex-shrink: 0; }
+  .waste-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--red); line-height: 1; }
+  .waste-badge-label { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; }
+  .waste-bar-wrap { padding: 20px 28px; background: var(--paper); }
+  .waste-bar-labels { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); margin-bottom: 6px; letter-spacing: 1px; }
+  .waste-bar { height: 44px; display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .wbar-wait { background: var(--red); width: 68.75%; display: flex; align-items: center; justify-content: center; }
+  .wbar-build { background: var(--teal); width: 31.25%; display: flex; align-items: center; justify-content: center; }
+  .wbar-text { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--white); }
+  .waste-source { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+  .three-numbers { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1.5px solid var(--gray-light); }
+  .num-card { padding: 24px 20px; text-align: center; border-right: 1px solid var(--gray-light); }
+  .num-card:last-child { border-right: none; }
+  .num-top { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
+  .num-big { font-family: 'Bebas Neue', sans-serif; font-size: 60px; color: var(--red); line-height: 1; margin-bottom: 6px; }
+  .num-big.teal { color: var(--teal); }
+  .num-label { font-size: 12px; font-weight: 500; margin-bottom: 4px; line-height: 1.4; }
+  .num-sub { font-size: 11px; color: var(--gray); line-height: 1.4; margin-bottom: 8px; }
+  .num-source { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); border-top: 1px solid var(--gray-light); padding-top: 6px; margin-top: 4px; }
+  .what-if-strip { background: var(--teal-light); border-top: 1.5px solid var(--teal-mid); padding: 20px 28px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .what-if-compare { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .wif-box { text-align: center; border-radius: 4px; padding: 12px 16px; }
+  .wif-box.was { background: var(--red-light); border: 1.5px solid var(--red); }
+  .wif-box.could { background: var(--white); border: 1.5px solid var(--teal); }
+  .wif-weeks { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 1; margin-bottom: 2px; }
+  .wif-box.was .wif-weeks { color: var(--red); }
+  .wif-box.could .wif-weeks { color: var(--teal); }
+  .wif-label { font-size: 11px; font-weight: 500; }
+  .wif-box.was .wif-label { color: var(--red); }
+  .wif-box.could .wif-label { color: var(--teal); }
+  .wif-vs { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--gray); }
+  .what-if-text { font-size: 13px; line-height: 1.6; color: var(--ink); }
+  .what-if-text strong { color: var(--teal); }
+  .what-if-source { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 4px; }
+
+  .punch-2-panel { background: var(--ink); border-radius: 6px; padding: 28px; }
+  .p2-intro { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.8); margin-bottom: 24px; max-width: 820px; }
+  .p2-intro strong { color: var(--white); }
+  .mechanism-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; align-items: start; margin-bottom: 20px; }
+  .mflow-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 16px; }
+  .mflow-box.critical { border-color: var(--amber); background: rgba(196,98,26,0.2); }
+  .mflow-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .mflow-box.critical .mflow-label { color: var(--amber); }
+  .mflow-box:not(.critical) .mflow-label { color: rgba(255,255,255,0.4); }
+  .mflow-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+  .mflow-body { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 6px; }
+  .mflow-cause { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,165,80,0.85); line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; }
+  .mflow-arrow { display: flex; flex-direction: column; align-items: center; padding: 20px 12px 0; color: rgba(255,255,255,0.25); font-size: 22px; line-height: 1; }
+  .mflow-arrow-label { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); text-align: center; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .inbound-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 16px; }
+  .inbound-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 14px; }
+  .inbound-card.alert { border-color: var(--amber); background: rgba(196,98,26,0.1); }
+  .inbound-card-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+  .inbound-card.alert .inbound-card-label { color: var(--amber); }
+  .inbound-card-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+  .inbound-card-body { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .same-pattern { background: rgba(181,32,14,0.2); border: 1.5px solid var(--red); border-radius: 4px; padding: 16px 20px; font-size: 13px; color: var(--white); line-height: 1.7; }
+  .same-pattern strong { color: #ff9e9e; }
+
+  .decisions-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 20px; }
+  .decision-card { background: var(--purple-light); border: 1.5px solid var(--purple); border-radius: 4px; padding: 24px; }
+  .decision-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--purple); opacity: 0.2; line-height: 1; margin-bottom: 2px; }
+  .decision-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--purple); margin-bottom: 3px; }
+  .decision-role { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .decision-body { font-size: 12px; line-height: 1.6; color: var(--ink); margin-bottom: 14px; }
+  .consequence { background: rgba(61,45,107,0.08); border-left: 3px solid var(--purple); padding: 10px 14px; font-size: 12px; line-height: 1.5; color: var(--purple); border-radius: 0 3px 3px 0; }
+  .consequence strong { display: block; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.7; }
+
+  .closing-strip { background: var(--ink); border-radius: 4px; padding: 20px 28px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+  .closing-text { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.8); }
+  .closing-text strong { color: var(--white); }
+  .closing-badge { text-align: center; flex-shrink: 0; }
+  .closing-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--amber); line-height: 1.2; }
+  .closing-badge-label { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+  .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--gray-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  .impact-grid { display:grid; grid-template-columns:repeat(3,1fr); border-top:1.5px solid var(--gray-light); }
+  .impact-card { padding:20px; border-right:1px solid var(--gray-light); }
+  .impact-card:last-child { border-right:none; }
+  .impact-card-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .impact-card-title { font-size:13px; font-weight:600; margin-bottom:10px; line-height:1.3; }
+  .impact-item { font-size:11px; line-height:1.6; color:var(--gray); margin-bottom:6px; padding-left:12px; position:relative; }
+  .impact-item::before { content:'—'; position:absolute; left:0; color:var(--gray-light); }
+  .impact-card.biz .impact-card-label { color:var(--red); }
+  .impact-card.biz .impact-card-title { color:var(--red); }
+  .impact-card.prod .impact-card-label { color:var(--amber); }
+  .impact-card.prod .impact-card-title { color:var(--amber); }
+  .impact-card.cust .impact-card-label { color:var(--teal); }
+  .impact-card.cust .impact-card-title { color:var(--teal); }
+  .impact-card.biz.now .impact-card-label { color:var(--red); }
+  .impact-section-header { padding:14px 20px; border-top:1.5px solid var(--gray-light); display:flex; align-items:center; gap:12px; }
+  .impact-section-tag { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:3px 10px; border-radius:2px; font-weight:500; }
+  .impact-section-tag.then { background:var(--red); color:var(--white); }
+  .impact-section-tag.now { background:var(--amber); color:var(--white); }
+  .impact-section-desc { font-size:12px; color:var(--gray); }
+
+  @media (max-width: 860px) {
+    .title-context, .three-numbers, .inbound-strip, .decisions-grid { grid-template-columns: 1fr; }
+    .mechanism-flow { grid-template-columns: 1fr; }
+    .what-if-strip, .closing-strip { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <div class="title-block">
+    <div class="eyebrow">IFE Hangar Wave 3 &nbsp;|&nbsp; American Airlines &nbsp;|&nbsp; Field Evidence &nbsp;|&nbsp; March 2026</div>
+    <div class="main-title">The Plane Is Ready. Nobody Is In The Tower.</div>
+    <div class="title-context">
+      <div class="context-box insight">
+        <div class="context-label">What the coaching team found</div>
+        <div class="context-body">This data existed before we arrived. <strong>Nobody had put it on a wall.</strong> Three weeks on the ground surfaced what directors, MDs, and senior engineering managers confirmed when they saw it: the same system that produced the free WiFi result is operating today.</div>
+      </div>
+      <div class="context-box stakes">
+        <div class="context-label">Why this matters right now</div>
+        <div class="context-body">The IFE team is not slow. They are not under-skilled. <strong>The system has no mechanism to protect their focus.</strong> Every week this goes unresolved is a week the organization repeats a pattern it already paid for once.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="punch punch-1">
+    <div class="punch-band">
+      <div class="punch-number">1</div>
+      <div class="punch-label-block">
+        <div class="punch-tag">What happened</div>
+        <div class="punch-title">American Airlines Already Paid For This. Here Is The Receipt.</div>
+      </div>
+      <div class="punch-divider"></div>
+    </div>
+    <div class="punch-1-panel">
+      <div class="waste-header">
+        <div class="waste-headline">The free WiFi launch took 32 weeks. <strong>22 of those weeks the team was not building.</strong> They were waiting. Waiting for decisions, approvals, and rework cycles to close. The engineers were not idle. They were undoing and redoing work because the system had no process to catch problems before they became expensive.</div>
+        <div class="waste-badge">
+          <div class="waste-badge-num">69%</div>
+          <div class="waste-badge-label">of 32 weeks<br>was waste</div>
+        </div>
+      </div>
+      <div class="waste-bar-wrap">
+        <div class="waste-bar-labels">
+          <span>MAY 2025 &mdash; START</span>
+          <span>32 CALENDAR WEEKS TOTAL</span>
+          <span>JAN 2026 &mdash; LAUNCH</span>
+        </div>
+        <div class="waste-bar">
+          <div class="wbar-wait"><span class="wbar-text">22 WEEKS WAITING &mdash; 69%</span></div>
+          <div class="wbar-build"><span class="wbar-text">10 WKS BUILDING</span></div>
+        </div>
+        <div class="waste-source">Source: VSM summary row &mdash; built by the product trio and engineering team (DAL + HYD), January 30, 2026</div>
+      </div>
+      <div class="three-numbers">
+        <div class="num-card">
+          <div class="num-top">What it produced</div>
+          <div class="num-big">30%</div>
+          <div class="num-label">Free WiFi take rate</div>
+          <div class="num-sub">7 in 10 eligible passengers not connecting. No validated target was set before launch.</div>
+          <div class="num-source">Product Owner confirmed baseline</div>
+        </div>
+        <div class="num-card">
+          <div class="num-top">What it produced</div>
+          <div class="num-big">45%</div>
+          <div class="num-label">Enrollment identity mismatch</div>
+          <div class="num-sub">Nearly half of all free WiFi enrollments cannot be verified against the passenger manifest. One usability test was conducted across 32 weeks of delivery.</div>
+          <div class="num-source">AAdvantage analytics &mdash; Week 2 discovery session</div>
+        </div>
+        <div class="num-card">
+          <div class="num-top">What was possible</div>
+          <div class="num-big teal">16</div>
+          <div class="num-label">Weeks. The team's own projection.</div>
+          <div class="num-sub">The product trio and engineering team assessed the VSM on January 30 and projected 16 weeks as achievable with the same team and same skills.</div>
+          <div class="num-source">Team projection &mdash; VSM session January 30, 2026</div>
+        </div>
+      </div>
+      <div class="what-if-strip">
+        <div class="what-if-compare">
+          <div class="wif-box was"><div class="wif-weeks">32</div><div class="wif-label">weeks actual</div></div>
+          <div class="wif-vs">VS</div>
+          <div class="wif-box could"><div class="wif-weeks">16</div><div class="wif-label">weeks possible</div></div>
+        </div>
+        <div>
+          <div class="what-if-text"><strong>Same team. Same skills. 16 weeks of recoverable delivery time.</strong> The difference is not capability. It is whether the system gives the team clarity before they build, not after. This is the team's own assessment of their own data.</div>
+          <div class="what-if-source">Source: product trio and engineering team VSM assessment, January 30, 2026</div>
+        </div>
+      </div>
+
+      <div class="impact-section-header">
+        <div class="impact-section-tag then">Then &mdash; Free WiFi Launch</div>
+        <div class="impact-section-desc">What it cost. Source: VSM session January 30, 2026 &mdash; team's own words.</div>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-card biz">
+          <div class="impact-card-label">Business impact</div>
+          <div class="impact-card-title">What the system cost the business</div>
+          <div class="impact-item">Late legal and AAdvantage enrollment added 3 weeks to design and development</div>
+          <div class="impact-item">Unresolved requests now sit in MVP2, not delivered</div>
+          <div class="impact-item">Subscription service not built to handle real demand, leading to a WiFi outage post-launch</div>
+        </div>
+        <div class="impact-card prod">
+          <div class="impact-card-label">Product impact</div>
+          <div class="impact-card-title">What the system cost the product</div>
+          <div class="impact-item">Metrics exist but reviewed for awareness, not decisions</div>
+          <div class="impact-item">Multiple sources of truth owned by multiple people</div>
+          <div class="impact-item">Team given a firm deliverable and a timeline with no confirmed problem statement</div>
+        </div>
+        <div class="impact-card cust">
+          <div class="impact-card-label">Customer impact</div>
+          <div class="impact-card-title">What the system cost the customer</div>
+          <div class="impact-item">Launched across approximately 1,500 aircraft with no validated take rate target</div>
+          <div class="impact-item">One usability test conducted in 32 weeks of delivery</div>
+          <div class="impact-item">Accessibility work completed late and pushed to MVP2</div>
+        </div>
+      </div>
+
+      <div class="impact-section-header">
+        <div class="impact-section-tag now">Now &mdash; Current Engagement</div>
+        <div class="impact-section-desc">If the two active OKRs are not completed, this is what it costs. Objective 1 cancelled March 23. Source: field observation Weeks 1&ndash;4.</div>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-card biz now">
+          <div class="impact-card-label">Business impact</div>
+          <div class="impact-card-title">What the current setup is costing the business</div>
+          <div class="impact-item">Two unplanned items per week pulling the three connectors away from the three objectives</div>
+          <div class="impact-item">Just in time backlog means no delivery runway beyond the current sprint</div>
+          <div class="impact-item">12 competing items projected by May 22 at the current rate</div>
+          <div class="impact-item">The 16-week delivery improvement the team projected remains unrealized</div>
+        </div>
+        <div class="impact-card prod now">
+          <div class="impact-card-label">Product impact</div>
+          <div class="impact-card-title">What the current setup is costing the product</div>
+          <div class="impact-item">DAL and HYD are building but the work delivered does not connect to a confirmed business outcome</div>
+          <div class="impact-item">Product Owner carrying PM responsibilities simultaneously due to a 3-month director vacancy</div>
+          <div class="impact-item">Stories written reactively rather than from a confirmed discovery foundation</div>
+          <div class="impact-item">The team exits the engagement without the product thinking muscle it was designed to build. The next piece of work arrives the same way the free WiFi launch did</div>
+        </div>
+        <div class="impact-card cust now">
+          <div class="impact-card-label">Customer impact</div>
+          <div class="impact-card-title">What the current setup is costing the customer</div>
+          <div class="impact-item">O3 incomplete: 45% enrollment mismatch persists. Passengers hit a broken enrollment experience with no resolution path into the next release</div>
+          <div class="impact-item">O2 incomplete: Connecting passengers receive no flight information on the portal during flight. The gap exists on every connecting flight today</div>
+          <div class="impact-item">O1 cancelled March 23: Scope reduced due to capacity constraints. 7 in 10 passengers still not connecting. Known friction points remain unaddressed. Every abandoned enrollment is a missed Citi card conversion</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="punch punch-2">
+    <div class="punch-band">
+      <div class="punch-number">2</div>
+      <div class="punch-label-block">
+        <div class="punch-tag">What is happening right now</div>
+        <div class="punch-title">The Same Mechanism Is Active Today. The DAL and HYD Teams Are At The Gate.</div>
+      </div>
+      <div class="punch-divider"></div>
+    </div>
+    <div class="punch-2-panel">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0;border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div style="background:var(--teal-light);border:none;padding:24px 28px;border-bottom:none;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--teal);margin-bottom:16px;">The Cleared Flight Plan</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:16px;max-width:320px;">
+            <div style="background:var(--white);border:1.5px solid var(--teal);border-radius:4px;padding:10px 18px;font-size:12px;color:var(--teal);font-weight:500;width:100%;text-align:center;">Strategic priorities</div>
+            <div style="font-size:18px;color:var(--teal);text-align:center;width:100%;">↓</div>
+            <div style="background:var(--teal);border-radius:4px;padding:12px 18px;font-size:12px;color:var(--white);font-weight:500;text-align:center;line-height:1.5;width:100%;">One filter<br>Do 2 active objectives cover this?<br>Yes &rarr; runway. No &rarr; waits.</div>
+            <div style="font-size:18px;color:var(--teal);text-align:center;width:100%;">↓</div>
+            <div style="background:var(--white);border:2px solid var(--teal);border-radius:4px;padding:12px 18px;font-size:13px;color:var(--teal);font-weight:700;text-align:center;line-height:1.4;width:100%;">IFE TEAM<br><span style="font-size:11px;font-weight:400;">Focused. One direction.</span></div>
+          </div>
+          <div style="border-left:3px solid var(--teal);padding:10px 14px;background:rgba(26,107,90,0.08);border-radius:0 3px 3px 0;">
+            <div style="font-size:12px;color:var(--teal);font-style:italic;line-height:1.6;">One air traffic controller. Work is triaged before it reaches the team. The team knows what to build, why, and what winning looks like.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--amber-light);border:none;padding:24px 28px;border-left:2px solid var(--amber-mid);">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--amber);margin-bottom:16px;">The Flight Plan Today</div>
+          <div style="background:var(--red);border-radius:3px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:12px;display:inline-block;">No filter. No triage. No tower.</div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+              <div style="background:var(--white);border:1.5px solid var(--red);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--red);text-align:center;font-weight:500;">Dual ownership boundary unresolved</div>
+              <div style="background:var(--white);border:1.5px solid var(--red);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--red);text-align:center;font-weight:500;">PM director role vacant 3 months</div>
+              <div style="background:var(--amber);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--white);font-weight:600;text-align:center;">Fox Sports World Cup &#x2197;</div>
+              <div style="background:var(--amber);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--white);font-weight:600;text-align:center;">AT&amp;T Passpoint &#x2197;</div>
+              <div style="background:var(--amber);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--white);font-weight:600;text-align:center;">Push Notifications &#x2197; new week 4</div>
+              <div style="background:var(--white);border:1px solid var(--amber-mid);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--gray);text-align:center;">MVP1 Helsinki work</div>
+              <div style="background:var(--white);border:1px solid var(--amber-mid);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--gray);text-align:center;">8 IFC Initiatives</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <div style="font-size:18px;color:var(--amber);">&#x2198;</div>
+              <div style="font-size:18px;color:var(--amber);">&#x2192;</div>
+              <div style="font-size:18px;color:var(--amber);">&#x2197;</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:var(--amber-light);border:2px solid var(--amber);border-radius:4px;padding:8px 12px;font-size:11px;color:var(--amber);font-weight:700;text-align:center;line-height:1.5;">3 Connectors<br><span style="font-size:10px;font-weight:400;color:var(--gray);">PO + UX + Architect<br>Pulled in 6 directions</span></div>
+              <div style="font-size:16px;color:var(--amber);text-align:center;">&#x2193;</div>
+              <div style="background:var(--white);border:1.5px solid var(--amber-mid);border-radius:4px;padding:8px 12px;font-size:11px;color:var(--gray);text-align:center;line-height:1.5;">DAL + HYD<br><span style="font-size:10px;">Just in time backlog.<br>No runway ahead.</span></div>
+            </div>
+          </div>
+          <div style="border-left:3px solid var(--amber);padding:10px 14px;background:rgba(196,98,26,0.08);border-radius:0 3px 3px 0;margin-top:12px;">
+            <div style="font-size:12px;color:var(--amber);font-style:italic;line-height:1.6;">Three towers. Six directions. The team absorbs everything and reworks constantly because no one upstream is authorized to make the triage call.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p2-intro" style="margin-top:24px;">The IFE team has two engineering groups ready to build. <strong>DAL (Dallas) and HYD (Hyderabad).</strong> Their work on Objectives 2 and 3 depends entirely on three people to feed them context, stories, and direction. Those three people are being pulled away simultaneously. The engineering teams are at the gate. The people who load the plane are somewhere else. <strong>This is the exact mechanism that produced 22 weeks of wait time the first time.</strong></div>
+
+      <div class="mechanism-flow">
+        <div class="mflow-box critical">
+          <div class="mflow-label">Being pulled away</div>
+          <div class="mflow-title">3 Critical Connectors</div>
+          <div class="mflow-body">Product Owner, UX Researcher, and Architect are the only three people who can feed DAL and HYD with context, direction, and stories. All three are being pulled into competing work with no organizational filter.</div>
+          <div class="mflow-cause">PM director role vacant 3 months. Ownership boundary between directors unresolved. UX allocated across 8 concurrent initiatives. Architect split across two delivery tracks. No prioritization decision made at director level.</div>
+        </div>
+        <div class="mflow-arrow"><span>&#x2192;</span><div class="mflow-arrow-label">means</div></div>
+        <div class="mflow-box">
+          <div class="mflow-label">Waiting at the gate</div>
+          <div class="mflow-title">DAL + HYD Engineers</div>
+          <div class="mflow-body">5 DAL engineers and full HYD team ready to build Objectives 2 and 3. Cannot pull work without the three connectors feeding them. Not slow. Not disengaged. Blocked upstream.</div>
+          <div class="mflow-cause">HYD received product context for the first time in Week 3 of this engagement. They self-organized immediately. The system was not giving it to them before the engagement began.</div>
+        </div>
+        <div class="mflow-arrow"><span>&#x2192;</span><div class="mflow-arrow-label">produces</div></div>
+        <div class="mflow-box">
+          <div class="mflow-label">The result</div>
+          <div class="mflow-title">No Business Value Backlog</div>
+          <div class="mflow-body">DAL and HYD are producing technical work. Without product-grounded stories from the three connectors, that work does not connect to the business outcomes the engagement was designed to produce.</div>
+          <div class="mflow-cause">This matches the VSM root cause: team executing without upstream clarity. Scope discovered during delivery. Same condition that drove 16 weeks of integration testing wait time in the free WiFi launch.</div>
+        </div>
+      </div>
+
+      <div class="inbound-strip">
+        <div class="inbound-card alert">
+          <div class="inbound-card-label">Inbound pattern confirmed</div>
+          <div class="inbound-card-title">3 Items in 4 Weeks</div>
+          <div class="inbound-card-body">AT&amp;T Passpoint, Fox Sports World Cup, and push notifications via a senior stakeholder arrived in Weeks 1 through 4. None aligned to the two active objectives. The team absorbed all three. No organizational filter exists.</div>
+        </div>
+        <div class="inbound-card alert">
+          <div class="inbound-card-label">Projection at current rate</div>
+          <div class="inbound-card-title">12 Items by May 22</div>
+          <div class="inbound-card-body">One unplanned item per week is the confirmed pattern. Across 12 engagement weeks that is 12 competing items pulling the three connectors further from DAL and HYD.</div>
+        </div>
+        <div class="inbound-card">
+          <div class="inbound-card-label">Observable today</div>
+          <div class="inbound-card-title">Backlog Insufficient</div>
+          <div class="inbound-card-body">DAL and HYD backlog does not have enough product-grounded stories to sustain full sprint velocity. The three connectors are the bottleneck. The constraint is upstream, not in the engineering teams.</div>
+        </div>
+      </div>
+
+      <div class="same-pattern">
+        <strong>The pattern is confirmed. The question is what changes next.</strong> This data was presented at the product leadership sync on March 10. The 69% figure was in the room. Nine days later, a senior leader asked in the leadership channel where the 69% was coming from. The data was present before the engagement began. It had not yet produced a decision.
+      </div>
+    </div>
+  </div>
+
+  <div class="punch punch-3">
+    <div class="punch-band">
+      <div class="punch-number">3</div>
+      <div class="punch-label-block">
+        <div class="punch-tag">What needs to change</div>
+        <div class="punch-title">Three Decisions. One Conversation Committed. Two Structural Conditions Open. The Team Cannot Close Any Of Them.</div>
+      </div>
+      <div class="punch-divider"></div>
+    </div>
+
+    <div class="decisions-grid">
+      <div class="decision-card">
+        <div class="decision-num">01</div>
+        <div class="decision-title">Ownership Clarity</div>
+        <div class="decision-role">Role: Director, Aircraft Interiors &amp; IFE Connectivity</div>
+        <div class="decision-body">The IFE product strategy has multiple parties providing direction to the same team with no confirmed authority to triage what lands first. This produced the 20:1 wait ratio on the Loyalty team dependency in the free WiFi launch. The same condition is active today across the DAL and HYD teams. A Managing Director committed on March 23 to convening a conversation between the two director-level owners. That conversation has not yet taken place.</div>
+        <div class="consequence">
+          <strong>Committed March 23. Conversation not yet complete.</strong>
+          Until the boundary is confirmed, competing instructions continue. DAL and HYD receive direction from multiple sources with no single authority to sequence it. The 16-week delivery improvement the team projected remains unrealized.
+        </div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-num">02</div>
+        <div class="decision-title">Inbound Work Filter</div>
+        <div class="decision-role">Role: Managing Director, Customer Experience</div>
+        <div class="decision-body">On March 19 a senior leader stated in the leadership channel: MVP1 always wins when there is a conflict. That is a triage rule, not a structural fix. Three unplanned items arrived in four weeks. A fourth is on the radar. The rule tells the team what wins when conflicts arise. It does not stop the conflicts from arriving. The three connectors keep absorbing every inbound item. The system producing the conflict remains unchanged.</div>
+        <div class="consequence">
+          <strong>Partially resolved March 19. Third item arrived week of March 23. Structural condition still open.</strong>
+          A triage rule is not a filter. The inbound items keep arriving. DAL and HYD keep waiting. The same mechanism that produced 22 weeks of wait time in the free WiFi launch is still operating. The rule tells the team who wins. The system needs to stop producing the conflict in the first place.
+        </div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-num">03</div>
+        <div class="decision-title">Research Prioritization</div>
+        <div class="decision-role">Role: Managing Director, Travel Rewards Technology</div>
+        <div class="decision-body">The UX research function is allocated across eight concurrent initiatives with no confirmed sequencing. On March 23 the group accepted a trade-off for Objective 2: the existing seatback IFE will serve as a design proxy. Deep UX work is not required for O2 at this time. For Objective 3, the UX dependency remains active. Customer messaging and visual design for the 45% enrollment mismatch scenario requires UX input. No backup exists at the current staffing level.</div>
+        <div class="consequence">
+          <strong>O2 trade-off accepted March 23. O3 UX dependency unresolved. Director decision still open.</strong>
+          Without a sequencing decision, Objective 3 delivers without customer-facing messaging. The 45% enrollment mismatch has no remediation path. DAL and HYD remain at the gate on UX for O3. The same single point of failure that existed during the free WiFi launch persists.
+        </div>
+      </div>
+    </div>
+
+    <div class="closing-strip">
+      <div class="closing-text">
+        The team built this data on January 30. <strong>Nobody had put it on a wall.</strong> Four weeks of coaching created the conditions for the organization to see what it already knew. The engineers are skilled. The runway is clear. The plane has fuel. One objective was cancelled. One conversation was committed to but has not yet taken place. <strong>Two structural conditions remain open. All of them affect whether DAL and HYD can push back from the gate.</strong>
+      </div>
+      <div class="closing-badge">
+        <div class="closing-badge-num">1 objective cancelled.<br>1 conversation committed.<br>2 conditions open.</div>
+        <div class="closing-badge-label">Product leadership<br>sync &mdash; March 10, 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">IFE Hangar Wave 3 &nbsp;|&nbsp; American Airlines &nbsp;|&nbsp; January 27 to May 22, 2026 &nbsp;|&nbsp; For distribution: engineer to CIO</div>
+    <div class="footer-text">Sources: VSM summary row (product trio + engineering team DAL + HYD, Jan 30 2026) &bull; AAdvantage analytics (Week 2) &bull; Product Owner baseline (Week 1) &bull; PM direct connect (March 16) &bull; IFE leadership channel (March 19) &bull; Product leadership sync (March 23)</div>
+  </div>
+
+</div>
+</body>
+</html>
